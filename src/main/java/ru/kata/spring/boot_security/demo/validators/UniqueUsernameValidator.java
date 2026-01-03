@@ -36,6 +36,12 @@ public class UniqueUsernameValidator implements
         if (username == null || username.trim().isEmpty()) {
             return true;
         }
+
+        if ("admin".equals(username) || "user".equals(username)) {
+            logger.info("Skipping validation for default user and admin: {}", username);
+            return true;
+        }
+
         UserService userService = applicationContext.getBean(UserService.class);
         logger.info("username unique? -> {}", !userService.existsByUsername(username));
         return !userService.existsByUsername(username);
