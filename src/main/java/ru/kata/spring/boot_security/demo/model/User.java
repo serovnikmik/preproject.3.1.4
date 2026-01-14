@@ -1,7 +1,5 @@
 package ru.kata.spring.boot_security.demo.model;
 
-//import javax.persistence.*;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.kata.spring.boot_security.demo.validators.UniqueUsername;

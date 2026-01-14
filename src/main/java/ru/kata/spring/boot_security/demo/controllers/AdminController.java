@@ -67,8 +67,8 @@ public class AdminController {
 
         if (bindingResult.hasErrors()){
             model.addAttribute("listOfUsers", userService.getAllUsers());
-            model.addAttribute("hasFormErrors", true); // устанавливаем флаг ошибок
-            return "admin/index"; // остаемся на той же странице
+            model.addAttribute("hasFormErrors", true);
+            return "admin/index";
         }
 
         Set<Role> roles = new HashSet<>();
@@ -80,7 +80,6 @@ public class AdminController {
                 }
             }
         } else {
-            // Получаем роль USER по имени
             Role userRole = roleService.getRoleByName("ROLE_USER");
             if (userRole != null) {
                 roles.add(userRole);

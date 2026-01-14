@@ -19,17 +19,14 @@
 <div class="container">
     <h1>Вход в систему</h1>
 
-    <!-- Сообщение об ошибке -->
     <div th:if="${param.error}" class="error">
         Неправильное имя пользователя или пароль
     </div>
 
-    <!-- Сообщение об успешном выходе -->
     <div th:if="${param.logout}" class="logout">
         Вы успешно вышли из системы
     </div>
 
-    <!-- Форма логина (ОБРАТИ ВНИМАНИЕ: action="/login", method="post") -->
     <form th:action="@{/login}" method="post">
         <div class="form-group">
             <label for="username">Имя пользователя:</label>

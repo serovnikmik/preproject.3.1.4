@@ -21,8 +21,8 @@ public class UserServiceImpl implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserDAO userDAO;
-    private PasswordEncoder passwordEncoder; // Для шифрования паролей
-    private final RoleService roleService; // Для работы с ролями
+    private PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
     @Autowired
     public UserServiceImpl(UserDAO userDAO,

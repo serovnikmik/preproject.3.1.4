@@ -10,7 +10,7 @@
                     <strong>username : </strong>
                     <span class="fw-bold text-primary" th:text="${#authentication.name}"></span>
 
-                    <!-- Роли -->
+                    <!-- Roles -->
                     <span class="ms-3">
                             <strong>with roles : </strong>
                             <span th:each="role, stat : ${#authentication.principal.authorities}">
