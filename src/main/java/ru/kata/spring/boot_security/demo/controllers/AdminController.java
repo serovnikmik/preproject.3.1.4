@@ -3,6 +3,7 @@ package ru.kata.spring.boot_security.demo.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -45,10 +46,11 @@ public class AdminController {
     }
 
     @GetMapping("")
-    public String adminPage(Model model) {
+    public String adminPage(Model model, @AuthenticationPrincipal User currentUser) {
         model.addAttribute("listOfUsers", userService.getAllUsers());
         model.addAttribute("user", new User());
         model.addAttribute("hasFormErrors", false);
+        model.addAttribute("currentUser", currentUser);
         return "admin/index";
     }
 
