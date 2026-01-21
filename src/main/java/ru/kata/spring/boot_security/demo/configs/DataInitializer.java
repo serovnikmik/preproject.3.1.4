@@ -1,36 +1,29 @@
 package ru.kata.spring.boot_security.demo.configs;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
+import ru.kata.spring.boot_security.demo.service.UserService;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @Component
+@Slf4j
 public class DataInitializer implements CommandLineRunner {
 
     private final RoleService roleService;
+    private final UserService userService;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    private final PasswordEncoder passwordEncoder;
-    private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
-
-    public DataInitializer(RoleService roleService, PasswordEncoder passwordEncoder) {
+    @Autowired
+    public DataInitializer(RoleService roleService, UserService userService) {
         this.roleService = roleService;
-        this.passwordEncoder = passwordEncoder;
+        this.userService = userService;
     }
 
     @Override
@@ -38,95 +31,73 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
         createDefaultRoles();
 
-        createDefaultAdminDirectly();
-        createDefaultUserDirectly();
+        if (!userService.existsByUsername("admin")) {
+            createDefaultAdmin();
+        }
+
+        if (!userService.existsByUsername("user")) {
+            createDefaultUser();
+        }
     }
 
-    @Transactional
-    public void createDefaultRoles() {
+    private void createDefaultRoles() {
         if (roleService.getRoleByName("ROLE_ADMIN") == null) {
             Role adminRole = new Role("ROLE_ADMIN");
             roleService.saveRole(adminRole);
+            log.info("Created role: ROLE_ADMIN");
         }
 
         if (roleService.getRoleByName("ROLE_USER") == null) {
             Role userRole = new Role("ROLE_USER");
             roleService.saveRole(userRole);
+            log.info("Created role: ROLE_USER");
         }
     }
 
-    @Transactional
-    public void createDefaultAdminDirectly() {
-        String adminUsername = "admin";
+    private void createDefaultAdmin() {
+        try {
+            log.info("Creating admin user via UserService...");
 
-        Long count = entityManager.createQuery(
-                        "SELECT COUNT(u) FROM User u WHERE u.username = :username",
-                        Long.class
-                )
-                .setParameter("username", adminUsername)
-                .getSingleResult();
-
-        if (count == 0) {
-            logger.info("Creating admin user directly...");
-
-            Role adminRole = entityManager.createQuery(
-                            "SELECT r FROM Role r WHERE r.name = 'ROLE_ADMIN'", Role.class)
-                    .getSingleResult();
-
-            Role userRole = entityManager.createQuery(
-                            "SELECT r FROM Role r WHERE r.name = 'ROLE_USER'", Role.class)
-                    .getSingleResult();
+            Set<Role> roles = new HashSet<>();
+            roles.add(roleService.getRoleByName("ROLE_ADMIN"));
+            roles.add(roleService.getRoleByName("ROLE_USER"));
 
             User admin = new User();
-            admin.setUsername(adminUsername);
-            admin.setPassword(passwordEncoder.encode("admin"));
+            admin.setUsername("admin");
+            admin.setPassword("admin");
             admin.setName("Administrator");
             admin.setEmail("admin@mail.ru");
             admin.setAge(30);
-
-            Set<Role> roles = new HashSet<>();
-            roles.add(adminRole);
-            roles.add(userRole);
             admin.setRoles(roles);
 
-            entityManager.persist(admin);
+            userService.save(admin);
 
-            logger.info("Admin created successfully");
+            log.info("Admin created successfully via UserService");
+        } catch (Exception e) {
+            log.error("Failed to create admin user: {}", e.getMessage(), e);
         }
     }
 
-    @Transactional
-    public void createDefaultUserDirectly() {
-        String userUsername = "user";
-
-        Long count = entityManager.createQuery(
-                        "SELECT COUNT(u) FROM User u WHERE u.username = :username",
-                        Long.class
-                )
-                .setParameter("username", userUsername)
-                .getSingleResult();
-
-        if (count == 0) {
-            logger.info("Creating default user directly...");
-
-            Role userRole = entityManager.createQuery(
-                            "SELECT r FROM Role r WHERE r.name = 'ROLE_USER'", Role.class)
-                    .getSingleResult();
-
-            User admin = new User();
-            admin.setUsername(userUsername);
-            admin.setPassword(passwordEncoder.encode("user"));
-            admin.setName("DefaultUser");
-            admin.setEmail("user@mail.ru");
-            admin.setAge(40);
+    private void createDefaultUser() {
+        try {
+            log.info("Creating default user via UserService...");
 
             Set<Role> roles = new HashSet<>();
-            roles.add(userRole);
-            admin.setRoles(roles);
+            roles.add(roleService.getRoleByName("ROLE_USER"));
 
-            entityManager.persist(admin);
+            User user = new User();
+            user.setUsername("user");
+            user.setPassword("user");
+            user.setName("DefaultUser");
+            user.setEmail("user@mail.ru");
+            user.setAge(40);
+            user.setRoles(roles);
 
-            logger.info("Default user created successfully");
+            userService.save(user);
+
+            log.info("Default user created successfully via UserService");
+        } catch (Exception e) {
+            log.error("Failed to create default user: {}", e.getMessage(), e);
         }
     }
 }
