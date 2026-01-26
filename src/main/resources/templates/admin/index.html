@@ -108,9 +108,7 @@
                                                 th:data-user-age="${user.age}"
                                                 th:data-user-email="${user.email}"
                                                 th:data-user-username="${user.username}"
-                                                th:data-user-roles="${user.rolesAsString}"
-                                                th:disabled="${user.id == currentUser.id}"
-                                                th:style="${user.id == currentUser.id} ? 'opacity: 0.5; cursor: not-allowed;' : ''">
+                                                th:data-user-roles="${user.rolesAsString}">
                                             Delete
                                         </button>
                                     </td>

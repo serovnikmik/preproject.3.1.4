@@ -3,8 +3,11 @@ package ru.kata.spring.boot_security.demo.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,6 +18,8 @@ import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
@@ -151,8 +156,24 @@ public class AdminController {
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteUser(@PathVariable("id") int id) {
-        userService.delete(id);
-        return "redirect:/admin";
+    public String deleteUser(@PathVariable("id") int id,
+                             HttpServletRequest request,
+                             HttpServletResponse response) {
+
+        Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = currentAuth.getName();
+
+        User userToDelete = userService.getUserByIdWithRoles(id);
+
+        if (userToDelete != null && userToDelete.getUsername().equals(currentUsername)) {
+            new SecurityContextLogoutHandler().logout(request, response, currentAuth);
+
+            userService.delete(id);
+
+            return "redirect:/login?logout";
+        } else {
+            userService.delete(id);
+            return "redirect:/admin";
+        }
     }
 }
