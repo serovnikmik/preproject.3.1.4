@@ -62,6 +62,9 @@ public class Role implements GrantedAuthority {
     }
 
     public String getRoleName() {
+        if (name == null) {
+            return "";
+        }
         return name.startsWith("ROLE_") ? name.substring(5) : name;
     }
 
