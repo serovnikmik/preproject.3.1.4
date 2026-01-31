@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.dao;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Repository;
@@ -11,9 +10,8 @@ import javax.persistence.*;
 import java.util.List;
 
 @Repository
+@Slf4j
 public class UserDAOImpl implements UserDAO {
-
-    private static final Logger logger = LoggerFactory.getLogger(UserDAOImpl.class);
 
     @PersistenceContext
     private EntityManager em;
@@ -36,7 +34,7 @@ public class UserDAOImpl implements UserDAO {
         try {
             userToFind = em.find(User.class, userID);
         } catch (Exception e) {
-            logger.error("Failed to get user with id={}", userID, e);
+            log.error("Failed to get user with id={}", userID, e);
         }
         return userToFind;
     }
@@ -45,9 +43,9 @@ public class UserDAOImpl implements UserDAO {
     public void save(User user) {
         try {
             em.persist(user);
-            logger.info("User saved: {}", user.getUsername());
+            log.info("User saved: {}", user.getUsername());
         } catch (EntityExistsException e) {
-            logger.error("Failed to save user with username='{}'. User already exists",
+            log.error("Failed to save user with username='{}'. User already exists",
                     user.getUsername(), e);
         }
     }
@@ -56,9 +54,9 @@ public class UserDAOImpl implements UserDAO {
     public void update(User user) {
         try {
             em.merge(user);
-            logger.info("User updated: {}", user.getUsername());
+            log.info("User updated: {}", user.getUsername());
         } catch (Exception e) {
-            logger.error("Failed to update user with id={}, username='{}'",
+            log.error("Failed to update user with id={}, username='{}'",
                     user.getId(), user.getUsername(), e);
         }
     }
@@ -69,9 +67,9 @@ public class UserDAOImpl implements UserDAO {
             for (User user : list) {
                 em.persist(user);
             }
-            logger.info("Saved {} users", list.size());
+            log.info("Saved {} users", list.size());
         } catch (EntityExistsException e) {
-            logger.error("Some users already exist (same parameters)", e);
+            log.error("Some users already exist (same parameters)", e);
         }
     }
 
@@ -79,9 +77,9 @@ public class UserDAOImpl implements UserDAO {
     public void deleteAllUsers() {
         try {
             em.createNativeQuery("TRUNCATE TABLE user").executeUpdate();
-            logger.info("All users deleted");
+            log.info("All users deleted");
         } catch (Exception e) {
-            logger.error("Failed to delete all users", e);
+            log.error("Failed to delete all users", e);
         }
     }
 
@@ -91,9 +89,9 @@ public class UserDAOImpl implements UserDAO {
             em.createQuery("DELETE FROM User u WHERE u.id = :id")
                     .setParameter("id", id)
                     .executeUpdate();
-            logger.info("User deleted with id={}", id);
+            log.info("User deleted with id={}", id);
         } catch (Exception e) {
-            logger.error("Failed to delete user with id={}", id, e);
+            log.error("Failed to delete user with id={}", id, e);
         }
     }
 
@@ -105,11 +103,11 @@ public class UserDAOImpl implements UserDAO {
                     "SELECT u FROM User u WHERE u.username = :username", User.class);
             q.setParameter("username", username);
             user = q.getSingleResult();
-            logger.debug("Found user by username: {}", username);
+            log.debug("Found user by username: {}", username);
         } catch (NoResultException e) {
-            logger.debug("User with username '{}' not found", username);
+            log.debug("User with username '{}' not found", username);
         } catch (Exception e) {
-            logger.error("Failed to find user with username='{}'", username, e);
+            log.error("Failed to find user with username='{}'", username, e);
         }
         return user;
     }
@@ -123,11 +121,11 @@ public class UserDAOImpl implements UserDAO {
                     User.class);
             q.setParameter("username", username);
             user = q.getSingleResult();
-            logger.debug("Found user with roles by username: {}", username);
+            log.debug("Found user with roles by username: {}", username);
         } catch (NoResultException e) {
-            logger.debug("User with username '{}' not found", username);
+            log.debug("User with username '{}' not found", username);
         } catch (Exception e) {
-            logger.error("Failed to find user with username='{}'", username, e);
+            log.error("Failed to find user with username='{}'", username, e);
         }
         return user;
     }
@@ -141,11 +139,11 @@ public class UserDAOImpl implements UserDAO {
                     User.class);
             q.setParameter("id", id);
             user = q.getSingleResult();
-            logger.debug("Found user with roles by id: {}", id);
+            log.debug("Found user with roles by id: {}", id);
         } catch (NoResultException e) {
-            logger.debug("User with id '{}' not found", id);
+            log.debug("User with id '{}' not found", id);
         } catch (Exception e) {
-            logger.error("Failed to find user with id={}", id, e);
+            log.error("Failed to find user with id={}", id, e);
         }
         return user;
     }
@@ -157,10 +155,10 @@ public class UserDAOImpl implements UserDAO {
                     "SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.roles ORDER BY u.id",
                     User.class);
             List<User> users = q.getResultList();
-            logger.debug("Found {} users with roles", users.size());
+            log.debug("Found {} users with roles", users.size());
             return users;
         } catch (Exception e) {
-            logger.error("Failed to get all users with roles", e);
+            log.error("Failed to get all users with roles", e);
             return List.of();
         }
     }
@@ -173,7 +171,7 @@ public class UserDAOImpl implements UserDAO {
                     .getSingleResult();
             return count > 0;
         } catch (Exception e) {
-            logger.error("Failed to check if username exists: '{}'", username, e);
+            log.error("Failed to check if username exists: '{}'", username, e);
             return false;
         }
     }

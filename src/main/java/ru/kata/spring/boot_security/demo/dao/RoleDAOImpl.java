@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.dao;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.kata.spring.boot_security.demo.model.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,9 +11,8 @@ import javax.persistence.*;
 import java.util.List;
 
 @Repository
+@Slf4j
 public class RoleDAOImpl implements RoleDAO {
-
-    private static final Logger logger = LoggerFactory.getLogger(RoleDAOImpl.class);
 
     @PersistenceContext
     private EntityManager em;
@@ -35,7 +35,7 @@ public class RoleDAOImpl implements RoleDAO {
         try {
             roleToFind = em.find(Role.class, id);
         } catch (Exception e) {
-            logger.error("Failed to find role with id={}", id, e);
+            log.error("Failed to find role with id={}", id, e);
         }
         return roleToFind;
     }
@@ -49,9 +49,9 @@ public class RoleDAOImpl implements RoleDAO {
             q.setParameter("name", name);
             role = q.getSingleResult();
         } catch (NoResultException e) {
-            logger.debug("Role with name '{}' not found", name);
+            log.debug("Role with name '{}' not found", name);
         } catch (Exception e) {
-            logger.error("Failed to find role with name='{}'", name, e);
+            log.error("Failed to find role with name='{}'", name, e);
         }
         return role;
     }
@@ -60,9 +60,9 @@ public class RoleDAOImpl implements RoleDAO {
     public void save(Role role) {
         try {
             em.persist(role);
-            logger.info("Role saved: {}", role.getName());
+            log.info("Role saved: {}", role.getName());
         } catch (EntityExistsException e) {
-            logger.error("Failed to save role with name='{}'. Role already exists",
+            log.error("Failed to save role with name='{}'. Role already exists",
                     role.getName(), e);
         }
     }
@@ -71,9 +71,9 @@ public class RoleDAOImpl implements RoleDAO {
     public void update(Role role) {
         try {
             em.merge(role);
-            logger.info("Role updated: {}", role.getName());
+            log.info("Role updated: {}", role.getName());
         } catch (Exception e) {
-            logger.error("Failed to update role with id={}, name='{}'",
+            log.error("Failed to update role with id={}, name='{}'",
                     role.getId(), role.getName(), e);
         }
     }
@@ -84,9 +84,9 @@ public class RoleDAOImpl implements RoleDAO {
             em.createQuery("DELETE FROM Role r WHERE r.id = :id")
                     .setParameter("id", id)
                     .executeUpdate();
-            logger.info("Role deleted with id={}", id);
+            log.info("Role deleted with id={}", id);
         } catch (Exception e) {
-            logger.error("Failed to delete role with id={}", id, e);
+            log.error("Failed to delete role with id={}", id, e);
         }
     }
 
@@ -94,9 +94,9 @@ public class RoleDAOImpl implements RoleDAO {
     public void deleteAllRoles() {
         try {
             em.createNativeQuery("TRUNCATE TABLE role").executeUpdate();
-            logger.info("All roles deleted");
+            log.info("All roles deleted");
         } catch (Exception e) {
-            logger.error("Failed to delete all roles", e);
+            log.error("Failed to delete all roles", e);
         }
     }
 }

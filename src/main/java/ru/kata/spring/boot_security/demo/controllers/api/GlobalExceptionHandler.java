@@ -3,11 +3,9 @@ package ru.kata.spring.boot_security.demo.controllers.api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.kata.spring.boot_security.demo.exceptions.EmailAlreadyExistsException;
 import ru.kata.spring.boot_security.demo.exceptions.UsernameAlreadyExistsException;
 
 import java.util.HashMap;
@@ -17,7 +15,6 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    // Убедитесь, что в GlobalExceptionHandler есть:
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
