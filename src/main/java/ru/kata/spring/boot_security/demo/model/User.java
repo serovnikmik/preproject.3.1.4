@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.model;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import ru.kata.spring.boot_security.demo.validators.OnCreate;
 import ru.kata.spring.boot_security.demo.validators.UniqueUsername;
 
 import javax.validation.constraints.*;
@@ -38,7 +39,7 @@ public class User implements UserDetails, Serializable {
     // -=-=-=-=-=-=-=-=-=-=-=-=-=
     @Column(name = "username", unique = true, nullable = false)
     @NotEmpty(message = "Username should not be empty")
-    @UniqueUsername
+    @UniqueUsername(groups = OnCreate.class)
     private String username;
 
     @Column(name = "password", nullable = false)
