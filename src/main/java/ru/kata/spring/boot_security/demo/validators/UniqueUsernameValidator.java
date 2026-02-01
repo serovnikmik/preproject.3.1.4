@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.validators;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -16,12 +17,10 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 @Component
+@Slf4j
 public class UniqueUsernameValidator implements
         ConstraintValidator<UniqueUsername, String>,
         ApplicationContextAware {
-
-    private static final Logger logger =
-            LoggerFactory.getLogger(UniqueUsernameValidator.class);
 
     private static ApplicationContext applicationContext;
 
@@ -32,18 +31,18 @@ public class UniqueUsernameValidator implements
 
     @Override
     public boolean isValid(String username, ConstraintValidatorContext context) {
-        logger.info("checking isValid username = {}", username);
+        log.info("checking isValid username = {}", username);
         if (username == null || username.trim().isEmpty()) {
             return true;
         }
 
         if ("admin".equals(username) || "user".equals(username)) {
-            logger.info("Skipping validation for default user and admin: {}", username);
+            log.info("Skipping validation for default user and admin: {}", username);
             return true;
         }
 
         UserService userService = applicationContext.getBean(UserService.class);
-        logger.info("username unique? -> {}", !userService.existsByUsername(username));
+        log.info("username unique? -> {}", !userService.existsByUsername(username));
         return !userService.existsByUsername(username);
     }
 }

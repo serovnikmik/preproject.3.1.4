@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
@@ -54,6 +55,18 @@ public class UserRestController {
     }
 
     // POST /api/users
+//        {
+//        "username": "newuser4",
+//            "password": "password123",
+//            "email": "new@example.com",
+//            "name": "New User",
+//            "age": 30,
+//            "roles": [
+//        {
+//            "id": 2
+//        }
+//    ]
+//    }
     @PostMapping
     public ResponseEntity<User> createUser(@Valid @RequestBody User parsedUser) {
         User user = new User();
@@ -88,28 +101,23 @@ public class UserRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
-//    // PUT /api/users/{id}
-//    @PutMapping("/{id}")
-//    public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody User user) {
-//        User existingUser = userService.getUserByIdWithRoles(id);
-//        if (existingUser == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//
-//        user.setId(id);
-//        userService.update(user);
-//        return ResponseEntity.ok(user);
-//    }
-//
-//    // DELETE /api/users/{id}
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deleteUser(@PathVariable int id) {
-//        User user = userService.getUserByIdWithRoles(id);
-//        if (user == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//
-//        userService.delete(id);
-//        return ResponseEntity.noContent().build();
-//    }
+    // PUT /api/users/{id}
+
+    // DELETE /api/users/{id}
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable int id) {
+        User user = userService.getUserByIdWithRoles(id);
+        if (!userService.existsById(id)) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                            "error", "User not found",
+                            "message", "User with id " + id + " does not exist",
+                            "timestamp", System.currentTimeMillis()
+                    ));
+        }
+
+        userService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

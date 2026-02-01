@@ -149,6 +149,13 @@ public class UserServiceImpl implements UserService {
         return userDAO.existsByUsername(username);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsById(int id) {
+        log.debug("Checking if username exists: {}", id);
+        return userDAO.existsById(id);
+    }
+
     @Transactional
     public void createUserWithRoles(User user, Set<String> roleNames) {
         log.info("Creating user with roles: {}, roles: {}",

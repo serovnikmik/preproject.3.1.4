@@ -22,6 +22,7 @@ public interface UserDAO {
     List<User> getAllUsersWithRoles();
 
     boolean existsByUsername(String username);
+    boolean existsById(int id);
 
 
 

@@ -175,4 +175,17 @@ public class UserDAOImpl implements UserDAO {
             return false;
         }
     }
+
+    public boolean existsById(int id) {
+        try {
+            Long count = em.createQuery(
+                            "SELECT COUNT(u) FROM User u WHERE u.id = :id", Long.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+            return count > 0;
+        } catch (Exception e) {
+            log.error("Failed to check if username exists: '{}'", id, e);
+            return false;
+        }
+    }
 }

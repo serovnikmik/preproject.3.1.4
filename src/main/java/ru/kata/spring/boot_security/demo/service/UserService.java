@@ -22,4 +22,5 @@ public interface UserService extends UserDetailsService {
     List<User> getAllUsersWithRoles();
     User getUserByIdWithRoles(int id);
     boolean existsByUsername(String username);
+    boolean existsById(int id);
 }
