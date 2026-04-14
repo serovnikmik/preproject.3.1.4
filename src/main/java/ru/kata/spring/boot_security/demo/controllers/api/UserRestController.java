@@ -90,22 +90,11 @@ public class UserRestController {
         return ResponseEntity.ok(user);
     }
 
-    // POST /api/users
-//        {
-//        "username": "newuser4",
-//            "password": "password123",
-//            "email": "new@example.com",
-//            "name": "New User",
-//            "age": 30,
-//            "roles": [
-//        {
-//            "id": 2
-//        }
-//    ]
-//    }
+
     @PostMapping
     public ResponseEntity<User> createUser(@Validated({Default.class, OnCreate.class}) @RequestBody User parsedUser) {
         User user = new User();
+        User user2 = new User();
 
         user.setUsername(parsedUser.getUsername());
         user.setPassword(parsedUser.getPassword());
