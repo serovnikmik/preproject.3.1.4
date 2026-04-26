@@ -320,6 +320,106 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+    // ==================== ОТПРАВКА ФОРМЫ СОЗДАНИЯ ====================
+    const createForm = document.querySelector('#newuser form');
+
+    createForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        // Собираем роли (из чекбоксов формы создания)
+        const roles = [];
+        if (document.getElementById('role_admin').checked) {
+            roles.push({ id: 1 });
+        }
+        if (document.getElementById('role_user').checked) {
+            roles.push({ id: 2 });
+        }
+
+        // Собираем данные
+        const userData = {
+            name: document.getElementById('name').value,
+            age: parseInt(document.getElementById('age').value) || 0,
+            email: document.getElementById('email').value,
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value,
+            roles: roles
+        };
+
+        // Очищаем предыдущие ошибки
+        clearCreateErrors();
+
+        try {
+            const response = await fetch('/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            });
+
+            if (response.ok) {
+                // Успех — сбрасываем форму, переключаемся на таб Users table, обновляем таблицу
+                createForm.reset();
+                document.getElementById('role_admin').checked = false;
+                document.getElementById('role_user').checked = true; // по умолчанию USER
+
+                // Переключаемся на таб с таблицей
+                const usersTab = document.getElementById('users-tab');
+                const tabInstance = new bootstrap.Tab(usersTab);
+                tabInstance.show();
+
+                await loadUsersTable();
+            } else {
+                const errorData = await response.json();
+
+                if (errorData.errors) {
+                    showCreateErrors(errorData.errors);
+                } else {
+                    alert(errorData.message || 'Ошибка при создании пользователя');
+                }
+            }
+
+        } catch (error) {
+            console.error('Ошибка:', error);
+            alert('Не удалось создать пользователя.');
+        }
+    });
+
+
+
+    // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ СОЗДАНИЯ ====================
+    // Показывает ошибки валидации в форме создания
+    function showCreateErrors(errors) {
+        for (const [field, message] of Object.entries(errors)) {
+            const input = document.getElementById(field);
+            const errorDiv = document.getElementById(field + 'Error');
+
+            if (input) {
+                input.classList.add('is-invalid');
+            }
+            if (errorDiv) {
+                errorDiv.textContent = message;
+            }
+        }
+    }
+
+    // Очищает ошибки в форме создания
+    function clearCreateErrors() {
+        const fields = ['name', 'age', 'email', 'username', 'password'];
+        fields.forEach(field => {
+            const input = document.getElementById(field);
+            const errorDiv = document.getElementById(field + 'Error');
+
+            if (input) {
+                input.classList.remove('is-invalid');
+            }
+            if (errorDiv) {
+                errorDiv.textContent = '';
+            }
+        });
+    }
+
+
         // ==================== ЗАГРУЗКА ТАБЛИЦЫ ====================
     loadUsersTable();
 });

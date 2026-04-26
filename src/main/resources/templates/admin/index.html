@@ -31,20 +31,16 @@
             <div id="admin-content">
                 <ul class="nav nav-tabs" id="adminTab" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" th:classappend="${not hasFormErrors} ? 'active' : ''"
-                                id="users-tab" data-bs-toggle="tab"
+                        <button class="nav-link active" id="users-tab" data-bs-toggle="tab"
                                 data-bs-target="#users" type="button" role="tab"
-                                aria-controls="users"
-                                th:attr="aria-selected=${not hasFormErrors} ? 'true' : 'false'">
+                                aria-controls="users" aria-selected="true">
                             Users table
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" th:classappend="${hasFormErrors} ? 'active' : ''"
-                                id="newuser-tab" data-bs-toggle="tab"
+                        <button class="nav-link" id="newuser-tab" data-bs-toggle="tab"
                                 data-bs-target="#newuser" type="button" role="tab"
-                                aria-controls="newuser"
-                                th:attr="aria-selected=${hasFormErrors} ? 'true' : 'false'">
+                                aria-controls="newuser" aria-selected="false">
                             New User
                         </button>
                     </li>
@@ -52,9 +48,8 @@
 
                 <div class="tab-content" id="adminTabContent">
                     <!-- Таблица пользователей -->
-                    <div class="tab-pane fade" th:classappend="${not hasFormErrors} ? 'show active' : ''"
-                         id="users" role="tabpanel"
-                         aria-labelledby="users-tab">
+                    <div class="tab-pane fade show active" id="users"
+                         role="tabpanel" aria-labelledby="users-tab">
                         <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
                             <h3>All users</h3>
                         </div>
@@ -82,63 +77,46 @@
                     </div>
 
                     <!-- Форма создания пользователя -->
-                    <div class="tab-pane fade" th:classappend="${hasFormErrors} ? 'show active' : ''"
-                         id="newuser" role="tabpanel"
-                         aria-labelledby="newuser-tab">
+                    <div class="tab-pane fade" id="newuser"
+                         role="tabpanel" aria-labelledby="newuser-tab">
                         <div class="mt-3">
                             <h3 class="mb-4">Add new user</h3>
 
-                            <form th:method="POST" th:action="@{/admin/create}"
-                                  th:object="${user}">
+                            <form id="createForm">
 
                                 <!-- Имя -->
                                 <div class="mb-3">
                                     <label for="name" class="form-label">First name</label>
-                                    <input type="text" th:field="*{name}" class="form-control"
-                                           th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
-                                           id="name">
-                                    <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('name')}"
-                                         th:errors="*{name}"></div>
+                                    <input type="text" class="form-control" id="name" name="name">
+                                    <div class="invalid-feedback" id="nameError"></div>
                                 </div>
 
                                 <!-- Возраст -->
                                 <div class="mb-3">
                                     <label for="age" class="form-label">Age</label>
-                                    <input type="number" th:field="*{age}" class="form-control"
-                                           th:classappend="${#fields.hasErrors('age')} ? 'is-invalid' : ''"
-                                           id="age">
-                                    <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('age')}"
-                                         th:errors="*{age}"></div>
+                                    <input type="number" class="form-control" id="age" name="age">
+                                    <div class="invalid-feedback" id="ageError"></div>
                                 </div>
 
                                 <!-- Email -->
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email</label>
-                                    <input type="email" th:field="*{email}" class="form-control"
-                                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
-                                           id="email">
-                                    <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('email')}"
-                                         th:errors="*{email}"></div>
+                                    <input type="email" class="form-control" id="email" name="email">
+                                    <div class="invalid-feedback" id="emailError"></div>
                                 </div>
 
                                 <!-- Логин -->
                                 <div class="mb-3">
                                     <label for="username" class="form-label">Username</label>
-                                    <input type="text" th:field="*{username}" class="form-control"
-                                           th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''"
-                                           id="username">
-                                    <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('username')}"
-                                         th:errors="*{username}"></div>
+                                    <input type="text" class="form-control" id="username" name="username">
+                                    <div class="invalid-feedback" id="usernameError"></div>
                                 </div>
 
                                 <!-- Пароль -->
                                 <div class="mb-3">
                                     <label for="password" class="form-label">Password</label>
-                                    <input type="password" th:field="*{password}" class="form-control"
-                                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"
-                                           id="password">
-                                    <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('password')}"
-                                         th:errors="*{password}"></div>
+                                    <input type="password" class="form-control" id="password" name="password">
+                                    <div class="invalid-feedback" id="passwordError"></div>
                                 </div>
 
                                 <!-- Роли -->
@@ -162,7 +140,7 @@
 
                                 <div class="mb-3">
                                     <button type="submit" class="btn btn-primary">Add new user</button>
-                                    <a th:href="@{/admin}" class="btn btn-secondary ms-2">Cancel</a>
+                                    <a href="/admin" class="btn btn-secondary ms-2">Cancel</a>
                                 </div>
                             </form>
                         </div>
@@ -241,8 +219,7 @@
                 <h5 class="modal-title" id="editModalLabel">Edit user</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="editForm" method="post" th:action="@{/admin/update/{id}(id=0)}">
-                <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+            <form id="editForm" >
                 <input type="hidden" id="editUserId" name="id">
                 <div class="modal-body">
                     <!-- ID -->
