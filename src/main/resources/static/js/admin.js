@@ -155,8 +155,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    // Если нужен CSRF-токен, добавь строку ниже
-                    // 'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
                 },
                 body: JSON.stringify(userData)
             });
@@ -188,10 +186,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ДЛЯ ОШИБОК ====================
-
     // Показывает ошибки валидации в полях формы
     function showEditErrors(errors) {
-        // errors — объект вида { name: "обязательно", age: "должно быть от 1 до 150" }
+        // errors <—> { name: "error", age: "error" }
         for (const [field, message] of Object.entries(errors)) {
             const input = document.getElementById('editUser' + field.charAt(0).toUpperCase() + field.slice(1));
             const errorDiv = document.getElementById('editUser' + field.charAt(0).toUpperCase() + field.slice(1) + 'Error');
@@ -261,7 +258,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (user.roles && Array.isArray(user.roles)) {
                     user.roles.forEach(role => {
                         Array.from(rolesSelect.options).forEach(option => {
-                            // Сравниваем по ID роли
                             if (role.id === 1 && option.value === 'ROLE_ADMIN') {
                                 option.selected = true;
                             } else if (role.id === 2 && option.value === 'ROLE_USER') {

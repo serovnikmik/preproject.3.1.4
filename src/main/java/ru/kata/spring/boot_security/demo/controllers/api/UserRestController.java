@@ -93,8 +93,7 @@ public class UserRestController {
 
     @PostMapping
     public ResponseEntity<User> createUser(@Validated({Default.class, OnCreate.class}) @RequestBody User parsedUser) {
-        User user = new User();
-        User user2 = new User();
+        User user = new User();w
 
         user.setUsername(parsedUser.getUsername());
         user.setPassword(parsedUser.getPassword());
