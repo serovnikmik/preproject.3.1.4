@@ -1,5 +1,54 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+        // ==================== ФУНКЦИЯ ОБНОВЛЕНИЯ ТАБЛИЦЫ ====================
+        async function loadUsersTable() {
+            try {
+                const response = await fetch('/api/users');
+                if (!response.ok) throw new Error('Ошибка загрузки');
+
+                const users = await response.json();
+
+                const tbody = document.querySelector('#users tbody');
+                tbody.innerHTML = users.map(user => {
+                    // Формируем бейджики ролей
+                    const rolesBadges = user.roles.map(role => {
+                        const badgeClass = role.name === 'ROLE_ADMIN' ? 'bg-danger' : 'bg-primary';
+                        return `<span class="badge me-1 ${badgeClass}">${role.name}</span>`;
+                    }).join('');
+
+                    return `
+                        <tr>
+                            <td>${user.id}</td>
+                            <td>${user.name || ''}</td>
+                            <td>${user.age || ''}</td>
+                            <td>${user.email || ''}</td>
+                            <td>${user.username}</td>
+                            <td>${rolesBadges}</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning edit-btn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editModal"
+                                        data-user-id="${user.id}">
+                                    Edit
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-danger delete-btn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal"
+                                        data-user-id="${user.id}">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Ошибка загрузки таблицы:', error);
+            }
+        }
+
     // ==================== МОДАЛКА РЕДАКТИРОВАНИЯ ====================
     const editModal = document.getElementById('editModal');
 
@@ -127,4 +176,6 @@ document.addEventListener('DOMContentLoaded', function() {
             modalInstance.hide();
         }
     });
+
+    loadUsersTable();
 });

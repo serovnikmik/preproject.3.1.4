@@ -74,59 +74,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="user : ${listOfUsers}">
-                                    <td th:text="${user.id}"></td>
-                                    <td th:text="${user.name}"></td>
-                                    <td th:text="${user.age}"></td>
-                                    <td th:text="${user.email}"></td>
-                                    <td th:text="${user.username}"></td>
-                                    <td>
-                                            <span th:each="role : ${user.roles}"
-                                                  class="badge me-1"
-                                                  th:classappend="${role.name == 'ROLE_ADMIN'} ? 'bg-danger' : 'bg-primary'"
-                                                  th:text="${role.name}"></span>
-                                    </td>
-                                    <td>
-                                        <!-- Edit -->
-<!--                                        <button class="btn btn-sm btn-warning edit-btn"-->
-<!--                                                data-bs-toggle="modal"-->
-<!--                                                data-bs-target="#editModal"-->
-<!--                                                th:data-user-id="${user.id}"-->
-<!--                                                th:data-user-name="${user.name}"-->
-<!--                                                th:data-user-age="${user.age}"-->
-<!--                                                th:data-user-email="${user.email}"-->
-<!--                                                th:data-user-username="${user.username}"-->
-<!--                                                th:data-user-roles="${user.rolesAsString}">-->
-<!--                                            Edit-->
-<!--                                        </button>-->
-                                        <button class="btn btn-sm btn-warning edit-btn"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#editModal"
-                                                th:data-user-id="${user.id}">
-                                            Edit
-                                        </button>
-                                    </td>
-                                    <td>
-                                        <!-- Delete -->
-<!--                                        <button class="btn btn-sm btn-danger delete-btn"-->
-<!--                                                data-bs-toggle="modal"-->
-<!--                                                data-bs-target="#deleteModal"-->
-<!--                                                th:data-user-id="${user.id}"-->
-<!--                                                th:data-user-name="${user.name}"-->
-<!--                                                th:data-user-age="${user.age}"-->
-<!--                                                th:data-user-email="${user.email}"-->
-<!--                                                th:data-user-username="${user.username}"-->
-<!--                                                th:data-user-roles="${user.rolesAsString}">-->
-<!--                                            Delete-->
-<!--                                        </button>-->
-                                        <button class="btn btn-sm btn-danger delete-btn"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#deleteModal"
-                                                th:data-user-id="${user.id}">
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
+<!--                                    Заполняется через JS (admin.js -> loadUsersTable) -->
                                 </tbody>
                             </table>
                         </div>
