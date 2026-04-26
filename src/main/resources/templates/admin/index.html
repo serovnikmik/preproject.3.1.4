@@ -227,10 +227,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <form id="deleteForm" method="post" style="display: inline;">
-                    <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
+                <button type="button" class="btn btn-danger" id="deleteConfirmBtn">Delete</button>
             </div>
         </div>
     </div>
@@ -257,21 +254,25 @@
                     <div class="mb-3">
                         <label for="editUserName" class="form-label"><strong>Name:</strong></label>
                         <input type="text" class="form-control" id="editUserName" name="name">
+                        <div class="invalid-feedback" id="editUserNameError"></div>
                     </div>
                     <!-- Age -->
                     <div class="mb-3">
                         <label for="editUserAge" class="form-label"><strong>Age:</strong></label>
                         <input type="number" class="form-control" id="editUserAge" name="age">
+                        <div class="invalid-feedback" id="editUserAgeError"></div>
                     </div>
                     <!-- Email -->
                     <div class="mb-3">
                         <label for="editUserEmail" class="form-label"><strong>Email:</strong></label>
                         <input type="email" class="form-control" id="editUserEmail" name="email">
+                        <div class="invalid-feedback" id="editUserEmailError"></div>
                     </div>
                     <!-- Username -->
                     <div class="mb-3">
                         <label for="editUserUsername" class="form-label"><strong>Username:</strong></label>
                         <input type="text" class="form-control" id="editUserUsername" name="username">
+                        <div class="invalid-feedback" id="editUserUsernameError"></div>
                     </div>
                     <!-- Password -->
                     <div class="mb-3">
@@ -279,6 +280,7 @@
                         <input type="password" class="form-control" id="editUserPassword" name="password"
                                placeholder="Leave empty to keep current password">
                         <small class="form-text text-muted">Leave blank if you don't want to change the password</small>
+                        <div class="invalid-feedback" id="editUserPasswordError"></div>
                     </div>
 <!--                    Roles-->
                     <div class="mb-3">
@@ -308,169 +310,6 @@
         </div>
     </div>
 </div>
-
-<!--<script>-->
-<!--    document.addEventListener('DOMContentLoaded', function() {-->
-<!--        const editModal = document.getElementById('editModal');-->
-<!--        editModal.addEventListener('show.bs.modal', function(event) {-->
-<!--            const button = event.relatedTarget;-->
-<!--            const userId = button.getAttribute('data-user-id');-->
-<!--            const userName = button.getAttribute('data-user-name');-->
-<!--            const userAge = button.getAttribute('data-user-age');-->
-<!--            const userEmail = button.getAttribute('data-user-email');-->
-<!--            const userUsername = button.getAttribute('data-user-username');-->
-<!--            const userRoles = button.getAttribute('data-user-roles'); // "ROLE_ADMIN,ROLE_USER"-->
-
-<!--            document.getElementById('editUserDisplayId').value = userId;-->
-<!--            document.getElementById('editUserId').value = userId;-->
-<!--            document.getElementById('editUserName').value = userName;-->
-<!--            document.getElementById('editUserAge').value = userAge;-->
-<!--            document.getElementById('editUserEmail').value = userEmail;-->
-<!--            document.getElementById('editUserUsername').value = userUsername;-->
-
-<!--            document.getElementById('editRoleAdmin').checked = false;-->
-<!--            document.getElementById('editRoleUser').checked = false;-->
-
-<!--            if (userRoles && userRoles.trim() !== '') {-->
-<!--                const rolesArray = userRoles.split(',');-->
-
-<!--                if (rolesArray.includes('ROLE_ADMIN')) {-->
-<!--                    document.getElementById('editRoleAdmin').checked = true;-->
-<!--                }-->
-<!--                if (rolesArray.includes('ROLE_USER')) {-->
-<!--                    document.getElementById('editRoleUser').checked = true;-->
-<!--                }-->
-<!--            }-->
-
-<!--            const form = document.getElementById('editForm');-->
-<!--            form.action = '/admin/update/' + userId;-->
-<!--        });-->
-
-<!--        editModal.addEventListener('hidden.bs.modal', function() {-->
-<!--            document.getElementById('editRoleAdmin').checked = false;-->
-<!--            document.getElementById('editRoleUser').checked = false;-->
-<!--        });-->
-<!--    });-->
-<!--</script>-->
-
-<!--<script>-->
-<!--    document.addEventListener('DOMContentLoaded', function() {-->
-<!--        const editModal = document.getElementById('editModal');-->
-
-<!--        editModal.addEventListener('show.bs.modal', async function(event) {-->
-<!--            const button = event.relatedTarget;-->
-<!--            const userId = button.getAttribute('data-user-id');-->
-
-<!--            console.log('Загружаем пользователя с ID:', userId);-->
-
-<!--            try {-->
-<!--                // Делаем запрос к нашему API-->
-<!--                const response = await fetch(`/api/users/${userId}/simple`);-->
-
-<!--                // Проверяем, что запрос успешный-->
-<!--                if (!response.ok) {-->
-<!--                    throw new Error(`Ошибка HTTP: ${response.status}`);-->
-<!--                }-->
-
-<!--                // Парсим JSON ответ-->
-<!--                const user = await response.json();-->
-<!--                console.log('Получены данные:', user);-->
-
-<!--                // Заполняем поля формы-->
-<!--                document.getElementById('editUserDisplayId').value = user.id;-->
-<!--                document.getElementById('editUserId').value = user.id;-->
-<!--                document.getElementById('editUserName').value = user.name || '';-->
-<!--                document.getElementById('editUserAge').value = user.age || '';-->
-<!--                document.getElementById('editUserEmail').value = user.email || '';-->
-<!--                document.getElementById('editUserUsername').value = user.username || '';-->
-<!--                document.getElementById('editUserPassword').value = '';-->
-
-<!--                document.getElementById('editRoleAdmin').checked = false;-->
-<!--                document.getElementById('editRoleUser').checked = false;-->
-
-<!--                // Устанавливаем роли (проверяем ID ролей из ответа API)-->
-<!--                if (user.roles && Array.isArray(user.roles)) {-->
-<!--                    user.roles.forEach(role => {-->
-<!--                        if (role.id === 1) { // ID == ADMIN-->
-<!--                            document.getElementById('editRoleAdmin').checked = true;-->
-<!--                        } else if (role.id === 2) { // ID == USER-->
-<!--                            document.getElementById('editRoleUser').checked = true;-->
-<!--                        }-->
-<!--                    });-->
-<!--                }-->
-
-<!--                // Обновляем action формы-->
-<!--                const form = document.getElementById('editForm');-->
-<!--                form.action = `/admin/update/${userId}`;-->
-
-<!--            } catch (error) {-->
-<!--                console.error('Ошибка загрузки пользователя:', error);-->
-<!--                alert('Не удалось загрузить данные пользователя. Проверьте консоль.');-->
-
-<!--                // Закрываем модалку при ошибке-->
-<!--                const modal = bootstrap.Modal.getInstance(editModal);-->
-<!--                modal.hide();-->
-<!--            }-->
-<!--        });-->
-
-<!--        // Очищаем форму при закрытии модалки-->
-<!--        editModal.addEventListener('hidden.bs.modal', function() {-->
-<!--            document.getElementById('editForm').reset();-->
-<!--            document.getElementById('editRoleAdmin').checked = false;-->
-<!--            document.getElementById('editRoleUser').checked = false;-->
-<!--            document.getElementById('editUserPassword').value = '';-->
-<!--        });-->
-<!--    });-->
-<!--</script>-->
-
-<!--<script>-->
-<!--    document.addEventListener('DOMContentLoaded', function() {-->
-<!--        const deleteModal = document.getElementById('deleteModal');-->
-
-<!--        deleteModal.addEventListener('show.bs.modal', function(event) {-->
-<!--            const button = event.relatedTarget;-->
-
-<!--            const userId = button.getAttribute('data-user-id');-->
-<!--            const userName = button.getAttribute('data-user-name');-->
-<!--            const userAge = button.getAttribute('data-user-age');-->
-<!--            const userEmail = button.getAttribute('data-user-email');-->
-<!--            const userUsername = button.getAttribute('data-user-username');-->
-<!--            const userRoles = button.getAttribute('data-user-roles');-->
-
-<!--            console.log('Получены данные:', { userId, userName, userAge, userEmail, userUsername, userRoles });-->
-
-<!--            document.getElementById('deleteUserId').value = userId || '';-->
-<!--            document.getElementById('deleteUserName').value = userName || '';-->
-<!--            document.getElementById('deleteUserAge').value = userAge || '';-->
-<!--            document.getElementById('deleteUserEmail').value = userEmail || '';-->
-<!--            document.getElementById('deleteUserUsername').value = userUsername || '';-->
-
-<!--            const rolesSelect = document.getElementById('deleteUserRoles');-->
-<!--            if (rolesSelect) {-->
-<!--                Array.from(rolesSelect.options).forEach(option => {-->
-<!--                    option.selected = false;-->
-<!--                });-->
-
-<!--                if (userRoles && userRoles.trim() !== '') {-->
-<!--                    const rolesArray = userRoles.split(',');-->
-<!--                    console.log('Роли массива:', rolesArray);-->
-
-<!--                    Array.from(rolesSelect.options).forEach(option => {-->
-<!--                        if (rolesArray.includes(option.value.trim())) {-->
-<!--                            option.selected = true;-->
-<!--                        }-->
-<!--                    });-->
-<!--                }-->
-<!--            }-->
-
-<!--            const form = document.getElementById('deleteForm');-->
-<!--            if (form) {-->
-<!--                form.action = '/admin/delete/' + userId;-->
-<!--                console.log('Form action установлен:', form.action);-->
-<!--            }-->
-<!--        });-->
-<!--    });-->
-<!--</script>-->
 
 </body>
 </html>
